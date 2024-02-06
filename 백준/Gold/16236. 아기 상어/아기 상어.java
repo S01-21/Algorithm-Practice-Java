@@ -5,28 +5,17 @@ public class Main {
 	static class Pair implements Comparable<Pair> {
 		int x, y;
 		int dist;
-
 		public Pair(int x, int y) {
 			super();
 			this.x = x;
 			this.y = y;
 		}
-
 		public Pair(int x, int y, int dist) {
 			super();
 			this.x = x;
 			this.y = y;
 			this.dist = dist;
 		}
-
-		public int getDist() {
-			return dist;
-		}
-
-		public void setDist(int dist) {
-			this.dist = dist;
-		}
-
 		@Override
 		public int compareTo(Pair o) {
 			if (o.dist != this.dist) { // 거리 최소인 애가 우선
@@ -39,11 +28,9 @@ public class Main {
 			}
 		}
 	}
-
 	static boolean isOut(int x, int y) {
 		return x < 0 || x >= N || y < 0 || y >= N;
 	}
-
 	static int N;
 	static int size = 2; // 상어 크기
 	static int count; // 먹은 물고기 개수 카운트
@@ -70,27 +57,24 @@ public class Main {
 				}
 			}
 		}
-
 		bfs(sharkX, sharkY);
-		System.out.println(time);
 	}
 
 	private static void bfs(int x, int y) {
 		pq = new PriorityQueue<>();
 		dist = new int[N][N];
 		Queue<Pair> queue = new LinkedList<>();
-		dist[x][y] = 1;
+		dist[x][y] = 1;  // 방문여부 나타내기 위해 0말고 1로 시작 (time계산 시  -1)
 		queue.add(new Pair(x, y));
 		
-
 		while (!queue.isEmpty()) {
 			Pair cur = queue.poll();
 			for (int dir = 0; dir < 4; dir++) {
 				int nx = cur.x + deltas[dir][0];
 				int ny = cur.y + deltas[dir][1];
-				if (isOut(nx, ny))
+				if (isOut(nx, ny))  // 범위체크 
 					continue;
-				if (dist[nx][ny] != 0)
+				if (dist[nx][ny] != 0)  // 방문했으면 패스 
 					continue;
 				if (map[nx][ny] > size)
 					continue; // 상어보다 큰 물고기 못먹고 못지나감
@@ -104,21 +88,20 @@ public class Main {
 			}
 		}
 
-		if (pq.size() == 0) {
+		if (pq.size() == 0) {  // 더 이상 먹을 물고기 없으면 종료 
 			System.out.println(time);
 			System.exit(0);
 		}
 
-		Pair pick = pq.peek();
-		map[pick.x][pick.y] = 9;
+		Pair pick = pq.peek();  // 우선순위 1번 위치 
+		map[pick.x][pick.y] = 9; // 상어 이동
 		map[x][y] = 0;
 		count++;
-		if (count == size) {
+		if (count == size) {  // 상어 크기만큼 물고기 먹으면 크기 +1
 			size++;
 			count = 0;
-		}
-			
-		time += pick.dist - 1;
+		}		
+		time += pick.dist - 1;  // 시작을 1로 해서 소요시간 -1 해주기 
 
 		bfs(pick.x, pick.y);
 	}
