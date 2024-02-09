@@ -36,7 +36,7 @@ public class Main {
 	}
 
 	static void check(int num, int rotateDir, int checkDir) {
-		if (checkDir == 0) {
+		if (checkDir == 0) {	// 회전 시작할 바퀴이면 양쪽 방향 다 체크 
 			if (num > 0) {
 				if (wheel[num][6] != wheel[num - 1][2]) {
 					check(num - 1, rotateDir * -1, -1);
@@ -47,20 +47,20 @@ public class Main {
 					check(num + 1, rotateDir * -1, 1);
 				}
 			}
-		} else if (checkDir == -1) {	// 왼쪽 확인 중 
+		} else if (checkDir == -1) {	// 왼쪽만 체크 
 			if (num > 0) {
 				if (wheel[num][6] != wheel[num - 1][2]) {
 					check(num - 1, rotateDir * -1, -1);
 				}
 			}
-		} else {	// 오른쪽 확인 중 
+		} else {	// 오른쪽만 체크 
 			if (num < 3) {
 				if (wheel[num][2] != wheel[num + 1][6]) {
 					check(num + 1, rotateDir * -1, 1);
 				}
 			}
 		}
-		rotate(num, rotateDir);
+		rotate(num, rotateDir);	// 현재 바퀴 회전 
 		
 	}
 
