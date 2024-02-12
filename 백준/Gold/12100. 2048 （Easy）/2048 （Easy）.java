@@ -5,7 +5,6 @@ public class Main {
 	static int N;
 	static int[][] board;
 	static int mx = Integer.MIN_VALUE;
-	static int[] moveDir;
 	static int[][] deltas = { { 1, 0 }, { 0, -1 }, { -1, 0 }, { 0, 1 } };
 
 	public static void main(String[] args) throws Exception {
@@ -13,7 +12,6 @@ public class Main {
 		N = Integer.parseInt(br.readLine());
 		board = new int[N][N];
 
-		moveDir = new int[5];
 		for (int i = 0; i < N; i++) {
 			StringTokenizer st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < N; j++) {
@@ -48,6 +46,7 @@ public class Main {
 	}
 
 	private static int[][] move(int dir, int[][] prevBoard) {
+		// 2차원배열 깊은 복사 
 		int[][] tmp = new int[N][N];
 		for (int i = 0; i < N; i++) {
 			tmp[i] = prevBoard[i].clone();
@@ -61,8 +60,7 @@ public class Main {
 					while (true) {
 						int nr = r + deltas[dir][0]*cnt;
 						int nc = c + deltas[dir][1]*cnt;
-						if (isOut(nr, nc))
-							break;
+						if (isOut(nr, nc))	break;
 						if (tmp[nr][nc] == 0){
 							cnt++;
 							continue;
@@ -78,10 +76,10 @@ public class Main {
 				
 				// 0 자리 메꾸기 
 				for (int r = 0; r< N-1; r++) {
-					if (tmp[r][c] == 0) {
+					if (tmp[r][c] == 0) {	// 0과 
 						int nr = r+1;
 						while (nr < N) {
-							if (tmp[nr][c] != 0) {
+							if (tmp[nr][c] != 0) {	// 처음 만나는 0이아닌수 자리 바꾸기 
 								tmp[r][c] = tmp[nr][c];
 								tmp[nr][c] = 0;
 								break;
