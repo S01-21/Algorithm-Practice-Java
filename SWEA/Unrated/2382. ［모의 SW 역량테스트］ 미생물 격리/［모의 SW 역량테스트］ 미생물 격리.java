@@ -1,4 +1,3 @@
-
 import java.util.*;
 import java.io.*;
 
@@ -55,38 +54,28 @@ public class Solution {
 
 			for (int j = i + 1; j < K; j++) {
 				Bug bugB = bugs[j];
-				if (!bugB.alive)
-					continue;
+				if (!bugB.alive) continue;
 				if (bugA.x == bugB.x && bugA.y == bugB.y) { // 충돌지점
 					sum += bugB.amount;
 					if (bugs[max].amount < bugB.amount) {
 						max = j;
 					}
 				}
-
 			}
 
 			for (int j = i; j < K; j++) {
 				Bug bugB = bugs[j];
-				if (!bugB.alive)
-					continue;
 				if (bugA.x == bugB.x && bugA.y == bugB.y) {
+					if (!bugB.alive) continue;
 					if (j == max) {
 						bugB.amount = sum;
 					}
-				}
-
-			}
-			for (int j = i; j < K; j++) {
-				Bug bugB = bugs[j];
-				if (bugA.x == bugB.x && bugA.y == bugB.y) {
 					if (j != max) {
 						bugB.alive = false;
 					}
 				}
 
 			}
-
 		}
 
 	}
