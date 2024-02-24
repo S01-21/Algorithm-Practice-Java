@@ -1,12 +1,12 @@
 import java.io.*;
 import java.util.*;
 
-// 회전 초밥  
 public class Main {
+
+	static int satisfiedCount, typeCnt;
 	static int[] check;
 	static int[] sushi;
 	static int N, D, K, C;
-    static int satisfiedCount, typeCnt;
 
 	public static void main(String args[]) throws Exception {
 		StringBuilder sb = new StringBuilder();
@@ -31,48 +31,37 @@ public class Main {
 			tmp++;
 		}
 		
+		//초기 세팅 
 		typeCnt = 0;
 		for (int i = 0; i < K; i++) {
 			if (sushi[i] == C) {
-				typeCnt++;
+				continue;
 			} else {
 				check[sushi[i]]++;
-
 				if (check[sushi[i]] == 1) {
 					satisfiedCount++;
 				}
 			}
 		}
+		
 		int max = 0;
-		int max1 = 0;
 		for (int i = K; i < N + K; i++) {
 			int j = i - K;
 			
 			add(i);
 			remove(j);
 			
-			if (satisfiedCount >= max && typeCnt == 0) {
-				max1 = satisfiedCount;
-			}
-			if (satisfiedCount >= max) {
-				max = satisfiedCount;
-			}
+			max = Math.max(max, satisfiedCount);
 		}
 
-		if (max <= max1) {
-			sb.append(max1 + 1);
-		} else {
-			sb.append(max + 1);
-		}
-		sb.append("\n");
+		sb.append(max+ 1).append("\n");
 
 		System.out.println(sb);
 	}
 
 	private static void add(int in) {
-		if (sushi[in] == C) {
-			typeCnt++;
-		} else {
+		if (sushi[in] == C) return;
+		else {
 			check[sushi[in]]++;
 			if (check[sushi[in]] == 1) {
 				satisfiedCount++;
@@ -81,9 +70,8 @@ public class Main {
 	}
 
 	private static void remove(int out) {
-		if (sushi[out] == C) {
-			typeCnt--;
-		} else {
+		if (sushi[out] == C) return;
+		else {
 			check[sushi[out]]--;
 			if (check[sushi[out]] == 0) {
 				satisfiedCount--;
