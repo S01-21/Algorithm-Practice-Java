@@ -2,66 +2,50 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
+
 	static StringBuilder sb = new StringBuilder();
 	static int N, M;
-	static Node[] stdList;
-	static Queue<Node> queue = new ArrayDeque<>();
-	static ArrayList<Integer> order = new ArrayList<>();
+	static int[] cnt;	// 진입차수 저장 
+	static ArrayList<Integer>[] std;	// 학생들 키 비교 저장 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());	// 학생 수 
+		M = Integer.parseInt(st.nextToken());	// 키 비교 횟수 
+		cnt = new int[N + 1];
+		std = new ArrayList[N + 1];
 		
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		stdList= new Node[N+1];
-		
-		
-		for (int i=0; i<N+1; i++) {
-			stdList[i] = new Node(i);
+		for (int i=0; i <= N; i++) {
+			std[i] = new ArrayList<>();
 		}
 		for (int i=0; i<M; i++) {
 			st = new StringTokenizer(br.readLine());
-			int stdA = Integer.parseInt(st.nextToken());
-			int stdB = Integer.parseInt(st.nextToken());
-			stdList[stdB].from.add(stdA);
-			stdList[stdA].to.add(stdB);
+			int a = Integer.parseInt(st.nextToken());
+			int b = Integer.parseInt(st.nextToken());	
+			std[a].add(b);
+			cnt[b]++;
 		}
 		
-		for (int i=1; i<=N; i++) {
-			if (stdList[i].from.size() == 0) {
-				queue.offer(stdList[i]);
+		Queue<Integer> queue = new ArrayDeque<>();
+		for (int i=1; i <= N; i++) {
+			if (cnt[i] == 0) {
+				queue.offer(i);
 			}
 		}
 		
-		bfs();
-		
-		for (int n : order) {
-			sb.append(n).append(" ");
-		}
-		System.out.println(sb);
-	}
-	static void bfs() {
-		while(!queue.isEmpty()) {
-			Node cur = queue.poll();
-			order.add(cur.num);
-			for (int i = cur.to.size()-1 ; i >= 0; i--) {
-				int nxt = cur.to.get(i);
-				stdList[nxt].from.remove(Integer.valueOf(cur.num));
-				stdList[cur.num].to.remove(Integer.valueOf(nxt));
-				if (stdList[nxt].from.size() == 0) {
-					queue.offer(stdList[nxt]);
+		while (!queue.isEmpty()) {
+			int cur = queue.poll();
+			sb.append(cur).append(" ");
+			for (int  i= 0; i < std[cur].size(); i++) {
+				int nxt = std[cur].get(i);
+				cnt[nxt]--;
+				if (cnt[nxt] == 0) {
+					queue.offer(nxt);
 				}
 			}
 		}
+		
+		System.out.println(sb);
 	}
-	static class Node{
-		int num;
-		ArrayList<Integer> to, from;
-		public Node(int num) {
-			super();
-			this.num = num;
-			to = new ArrayList<>();
-			from = new ArrayList<>();
-		}
-	}
+
 }
