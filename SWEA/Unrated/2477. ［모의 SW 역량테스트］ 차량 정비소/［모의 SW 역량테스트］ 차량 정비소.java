@@ -5,12 +5,11 @@ import java.io.*;
 public class Solution {
 	static StringBuilder sb = new StringBuilder();
 	static int N, M, K, A, B;
-	static int[] reception;
-	static int[] repair;
-	static int[][] curReception;
-	static int[][] curRepair;
+	static int[] reception, repair;
+	static int[][] curReception, curRepair;
 	static Queue<Person> queue;
-	static PriorityQueue<Person>	pq1, pq2;
+	static PriorityQueue<Person> pq2;
+	static Queue<Person> pq1;
 	static ArrayList<Integer> same;
 	static int res;		// A, B를 이용한 고객들의 고객번호의 합
 	static class Person implements Comparable<Person>{
@@ -21,14 +20,12 @@ public class Solution {
 			this.num = num;
 			this.arrival = arrival;
 		}
-		
 		public Person(int num, int arrival, int reception) {
 			super();
 			this.num = num;
 			this.arrival = arrival;
 			this.reception = reception;
 		}
-
 		@Override
 		public int compareTo(Person o) {
 			if (this.arrival != o.arrival) {
@@ -37,13 +34,6 @@ public class Solution {
 				return this.reception - o.reception;
 			}
 		}
-
-		@Override
-		public String toString() {
-			return "Person [num=" + num + ", arrival=" + arrival + ", reception=" + reception + "]";
-		}
-		
-		
 	}
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -78,7 +68,7 @@ public class Solution {
 			curRepair = new int[M+1][2];
 			
 			int time = 0;
-			pq1 = new PriorityQueue<>((o1, o2) -> (o1.num - o2.num));
+			pq1 = new ArrayDeque<>();
 			pq2 = new PriorityQueue<>();
 			
 			while (true) {
@@ -128,7 +118,6 @@ public class Solution {
 					}
 				}
 				
-				
 				time++;
 				// 접수, 정비데스크 고객 경과시간 반영
 				for (int i=1; i<=N; i++) {
@@ -139,7 +128,6 @@ public class Solution {
 					if (curRepair[i][0] == 0)	continue;
 					curRepair[i][1]++;
 				}
-				
 				if (checkLeft())	break;
 			}
 			
@@ -163,7 +151,7 @@ public class Solution {
 		for (int i = 1; i <= N; i++) {	// 접수데스크 남은사람있는지 확인
 			if (curReception[i][0] != 0)	return false;
 		}
-		for (int i=1; i<= M; i++) {
+		for (int i=1; i<= M; i++) {  // 정비데스크 남은사람있는지 확인
 			if (curRepair[i][0] != 0)	return false;
 		}
 		return true;
