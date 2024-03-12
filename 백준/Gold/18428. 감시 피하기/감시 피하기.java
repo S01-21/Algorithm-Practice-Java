@@ -5,7 +5,6 @@ public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static int N;
 	static ArrayList<Pair> teachers, blanks;
-	static boolean[] isObstacle;
 	static char[][] map;
 	static int[] dx = {-1,1,0,0};
 	static int[] dy = {0,0,-1,1};
@@ -16,11 +15,6 @@ public class Main {
 			this.x = x;
 			this.y = y;
 		}
-		@Override
-		public String toString() {
-			return "Pair (" + x + ", " + y + ")";
-		}
-		
 	}
 	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -41,7 +35,6 @@ public class Main {
 			}
 		}
 		
-		isObstacle = new boolean[blanks.size()];
 		setObstacle(0);	// 장애물 설치
 		System.out.println("NO");
 	}
@@ -66,7 +59,6 @@ public class Main {
 	private static boolean watch() {
 		for (int i=0; i<teachers.size(); i++) {	// 모든 선생님 위치에서 감시
 			Pair cur = teachers.get(i);
-			
 			for (int dir = 0; dir < 4; dir++) {
 				int nx = cur.x;
 				int ny = cur.y;
