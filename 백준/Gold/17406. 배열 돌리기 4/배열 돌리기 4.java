@@ -83,7 +83,6 @@ public class Main {
 				int startC = cur.c - cur.s+rotateCnt;
 				int endR = cur.r + cur.s-rotateCnt;
 				int endC = cur.c + cur.s-rotateCnt;
-				if (startR == endR && startC == endC)	break;
 				int tmp = copyArr[startR][startC];
 
 				for (int row = startR + 1; row <= endR; row++) {
