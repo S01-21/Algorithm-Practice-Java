@@ -67,12 +67,15 @@ public class Main {
 					res = dist[cur.x][cur.y][cur.flag] + 1;
 					return;
 				}
-				// 벽 부수기 (벽 부순적 없고, 이번 칸이 방문한적 없는 벽이면 부수기)
-				if (map[nx][ny] == 1 && cur.flag == 0 && dist[nx][ny][1] == 0) {
-					dist[nx][ny][1] = dist[cur.x][cur.y][cur.flag] + 1;
-					queue.offer(new Pair(nx, ny, 1));
+				
+				if (cur.flag == 0) {	// 벽 부순적 없는 경우 
+					if (dist[nx][ny][1] == 0 && map[nx][ny] == 1) {	// 방문한적 없는 벽이면 부수고 이동
+						dist[nx][ny][1] = dist[cur.x][cur.y][cur.flag] + 1;
+						queue.offer(new Pair(nx, ny, 1));
+					}
 				}
-				// 벽 안부수기 (벽이 아닌곳으로만 이동)
+				
+				// 방문한적 없는 빈칸은 그냥 이동 (현재 상태 그대로)
 				if (map[nx][ny] == 0 && dist[nx][ny][cur.flag] == 0) {
 					dist[nx][ny][cur.flag] = dist[cur.x][cur.y][cur.flag] + 1;
 					queue.offer(new Pair(nx, ny, cur.flag));
