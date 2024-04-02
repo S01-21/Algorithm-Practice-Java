@@ -1,109 +1,81 @@
 import java.util.*;
 import java.io.*;
-
-// 보호 필름
 public class Solution {
 	static StringBuilder sb = new StringBuilder();
 	static int D, W, K;
-	static int[][] film; // 0: A특성, 1: B특성
-	static int[][] copyFilm;
-	static int res; // 성능검사 통과할 수 있는 약품의 최소 투입 횟수 (결과)
-	static boolean[] isSelected;
-
+	static int[][] film;
+	static int[] inject;
+	static int res;
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
 		int T = Integer.parseInt(br.readLine());
-
+		
 		for (int tc = 1; tc <= T; tc++) {
 			sb.append("#").append(tc).append(" ");
 			StringTokenizer st = new StringTokenizer(br.readLine());
-			D = Integer.parseInt(st.nextToken());
-			W = Integer.parseInt(st.nextToken());
-			K = Integer.parseInt(st.nextToken());
+			D = Integer.parseInt(st.nextToken());	// 행 
+			W = Integer.parseInt(st.nextToken());	// 열  
+			K = Integer.parseInt(st.nextToken());	// 합격기준
 			film = new int[D][W];
-			copyFilm = new int[D][W];
-			for (int i = 0; i < D; i++) {
+			inject = new int[D];
+			
+			for (int i=0; i<D; i++) {
 				st = new StringTokenizer(br.readLine());
-				for (int j = 0; j < W; j++) {
+				for (int j=0; j<W; j++) {
 					film[i][j] = Integer.parseInt(st.nextToken());
 				}
 			}
 			
-			for (int i=0; i<D; i++) {
-				copyFilm[i] = film[i].clone();
-			}
-
+			
 			res = Integer.MAX_VALUE;
-			isSelected = new boolean[D];
-			divide(0);
-
-			if (res == Integer.MAX_VALUE) {
-				res = 0;
-			}
+			subset(0,0);
+			
+			
+			
 			sb.append(res).append("\n");
 		}
-
-		System.out.println(sb);
+		System.out.println(sb.toString());
+		br.close();
 	}
-
-	static void divide(int cnt) {
-		if (cnt == D) {
-			func(0, 0);
-			for (int i=0; i<D; i++) {
-				film[i] = copyFilm[i].clone();
-			}
+	private static void subset(int row, int cnt) {	// row: 현재 볼 행, cnt: 약품투입횟수 
+		if (cnt >= res) {
 			return;
 		}
-		isSelected[cnt] = true;
-		divide(cnt + 1);
-		isSelected[cnt] = false;
-		divide(cnt + 1);
-	}
-
-	// row: 현재 행, cnt: 약품 투입 횟수
-	private static void func(int row, int cnt) {
-		if (cnt >= res)
-			return;
 		if (row == D) {
 			if (test()) {
-				res = Math.min(cnt, res);
+				res = Math.min(res, cnt);
 			}
 			return;
 		}
-		if (isSelected[row]) {
-			// A적용
-			Arrays.fill(film[row], 0);
-			func(row + 1, cnt + 1);
-
-			// B적용
-			Arrays.fill(film[row], 1);
-			func(row + 1, cnt + 1);
-		} else {
-			// 적용x
-			func(row + 1, cnt);
-		}
-
+		inject[row] = -1;	// 주입 x
+		subset(row + 1, cnt);
+		inject[row] = 0;	// A
+		subset(row + 1, cnt + 1);
+		inject[row] = 1;	// B
+		subset(row + 1, cnt + 1);
 	}
-
-	static boolean test() {
-		boolean isPass = false;
-		for (int c = 0; c < W; c++) {
-			isPass = false;
+	private static boolean test() {
+		for (int j = 0 ; j < W; j++) {
 			int cnt = 1;
-			for (int r = 1; r < D; r++) {
-				if (film[r - 1][c] == film[r][c]) {
-					cnt++;
-					if (cnt == K) {
-						isPass = true;
-						break;
-					}
-				} else {
-					cnt = 1;
+			for (int i = 0; i < D-1; i++) {
+				int cur = inject[i] == -1 ? film[i][j] : inject[i];
+				int nxt = inject[i+1] == -1 ? film[i+1][j] : inject[i+1];
+				if (cnt == K) {
+					break;
 				}
+				if (cur == nxt) {
+					cnt++;
+					continue;
+				}
+				
+				cnt = 1;
 			}
-			if (!isPass)
+			if (cnt < K) {
 				return false;
+			}
 		}
-		return isPass;
+		
+		return true;
 	}
 }
