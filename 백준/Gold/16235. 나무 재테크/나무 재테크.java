@@ -7,31 +7,22 @@ public class Main {
 	static int[][] A;
 	static int[][] map;
 	static List<Tree>[][] treeMap;
-	static ArrayList<Tree> treeList;
 	static Queue<Tree> dead;
 	static int[] dx = { -1, -1, 0, 1, 1, 1, 0, -1 }; // 12시 방향부터 시계방향
 	static int[] dy = { 0, 1, 1, 1, 0, -1, -1, -1 };
 
 	static class Tree implements Comparable<Tree> {
 		int x, y, age;
-
 		public Tree(int x, int y, int age) {
 			super();
 			this.x = x;
 			this.y = y;
 			this.age = age;
 		}
-
 		@Override
 		public int compareTo(Tree o) {
 			return this.age - o.age;
 		}
-
-		@Override
-		public String toString() {
-			return "Tree [x=" + x + ", y=" + y + ", age=" + age + "]";
-		}
-
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -40,7 +31,6 @@ public class Main {
 		N = Integer.parseInt(st.nextToken()); // map 크기
 		M = Integer.parseInt(st.nextToken()); // 나무 개수
 		K = Integer.parseInt(st.nextToken()); // k년
-		treeList = new ArrayList<>();
 		dead = new ArrayDeque<>();
 		treeMap = new List[N+1][N+1];
 		for (int i=0; i<=N; i++) {
@@ -85,9 +75,6 @@ public class Main {
 		System.out.println(cnt);
 		br.close();
 	}
-
-	
-
 	private static void winter() {
 		for (int i = 1; i <= N; i++) {
 			for (int j = 1; j <= N; j++) {
@@ -112,8 +99,6 @@ public class Main {
 				}
 			}
 		}
-		
-		
 	}
 	private static void summer() {
 		while (!dead.isEmpty()) {
@@ -126,9 +111,7 @@ public class Main {
 		for (int i=1; i<=N; i++) {
 			for (int j=1; j<=N; j++) {
 				Collections.sort(treeMap[i][j]);
-				
 				for (int k = 0; k < treeMap[i][j].size(); k++) {
-					
 					Tree cur = treeMap[i][j].get(k);
 					if (cur.age > map[cur.x][cur.y]) { // 땅에 양분 부족해서 못먹으면 죽음
 						dead.add(new Tree(cur.x, cur.y, cur.age));
