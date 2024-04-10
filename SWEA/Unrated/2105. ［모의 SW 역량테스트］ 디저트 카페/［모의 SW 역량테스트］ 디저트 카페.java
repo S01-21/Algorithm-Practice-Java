@@ -1,73 +1,83 @@
 import java.util.*;
 import java.io.*;
 
-// 디저트 카페 
 public class Solution {
 	static StringBuilder sb = new StringBuilder();
 	static int N;
+	static int res;
 	static int[][] map;
-	static int[][] deltas = { { 1, 1 }, { 1, -1 }, { -1, -1 }, { -1, 1 } }; // 우하향-좌하향-좌상향-우상향
-	static int res; // 디저트를 가장 많이 먹을 때의 디저트 수 (결과)
 	static boolean[][] vis;
-	static boolean[] check; // 이전에 나온 숫자 방문 못하도록
-
+	static int[] dx = {1, 1, -1, -1};
+	static int[] dy = {1, -1, -1, 1};
+	static Set<Integer> route;
+	static class Pair{
+		int x, y;
+		public Pair(int x, int y) {
+			super();
+			this.x = x;
+			this.y = y;
+		}
+	}
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
 		int T = Integer.parseInt(br.readLine());
-
 		for (int tc = 1; tc <= T; tc++) {
-			sb.append("#").append(tc).append(" ");
 			N = Integer.parseInt(br.readLine());
 			map = new int[N][N];
-
-			for (int i = 0; i < N; i++) {
-				StringTokenizer st = new StringTokenizer(br.readLine());
-				for (int j = 0; j < N; j++) {
+			StringTokenizer st = null;
+			for (int i=0; i<N; i++) {
+				st = new StringTokenizer(br.readLine());
+				for (int j=0; j<N; j++) {
 					map[i][j] = Integer.parseInt(st.nextToken());
 				}
 			}
-
 			res = Integer.MIN_VALUE;
-			// 양옆과 아래로 두칸 여유가 있어야 사각형 만들 수 있음
-			for (int i = 0; i < N - 2; i++) {
-				for (int j = 1; j < N - 1; j++) {
+			
+			for (int i=0; i < N-2; i++) {	// 아래 2칸 여유 필요 
+				for (int j=1 ; j < N-1; j++) {	// 양옆 1칸 여유 필요 
+					route = new HashSet<>();
 					vis = new boolean[N][N];
-					check = new boolean[101];
-					dfs(i, j, i, j, 0, 0);
+					vis[i][j] = true;
+					route.add(map[i][j]);
+					func(i, j, i, j, 0, 1);
 				}
 			}
-
-			// 디저트 먹을 수 없는 경우 -1
+			
 			if (res == Integer.MIN_VALUE) {
 				res = -1;
 			}
-			sb.append(res).append("\n");
+			sb.append("#").append(tc).append(" ").append(res).append("\n");
 		}
 		System.out.println(sb);
+		br.close();
 	}
-
-	private static void dfs(int x, int y, int initX, int initY, int prevDir, int sum) {
-		check[map[x][y]] = true;
-		vis[x][y] = true;
-		for (int dir = prevDir; dir < 4; dir++) {	// 이전 방향과 같거나 다음 방향으로만 이동 가능
-			int nx = x + deltas[dir][0];
-			int ny = y + deltas[dir][1];
-			if (isOut(nx, ny))	continue;
-			if ((prevDir % 2 == dir % 2) && (prevDir != dir))	continue;	// 왔던 방향 반대로 바로는 못감
-			if (nx == initX && ny == initY) { // 한바퀴 돌고 원래 자리 도착
-				res = Math.max(res, sum + 1);
+	private static void func(int startX, int startY, int x, int y, int prevD, int cnt) {
+		for (int dir = prevD; dir < 4; dir++) {
+			if (prevD == 0) {
+				if (dir == 2)	continue;
+			} else if (prevD == 1) {
+				if (dir == 3)	continue;
+			}
+			
+			int nx = x + dx[dir];
+			int ny = y + dy[dir];
+			
+			// ㅊㅜㄹㅂㅏㄹㅈㅓㅁ ㄷㅗㅊㅏㄱ 
+			if (startX == nx && startY == ny) {
+				res = Math.max(res, cnt);
 				return;
 			}
-			if (!check[map[nx][ny]] && !vis[nx][ny]) {	// 방문한 적 없고, 이전에 나오지 않은 숫자이면 이동
-				dfs(nx, ny, initX, initY, dir, sum + 1);
-				check[map[nx][ny]] = false;
-				vis[nx][ny] = false;
-			}
+			if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+			if (vis[nx][ny])	continue;
+			if (route.contains(map[nx][ny])) continue;
+			if (dir == 1 && ny == 0) continue;		// 대각선 왼쪽 이동 시 왼쪽 여유 한칸 필요 
+			if (dir == 0 && nx == N-1)	continue;
+			vis[nx][ny] = true;
+			route.add(map[nx][ny]);
+			func(startX, startY, nx, ny, dir, cnt + 1);
+			vis[nx][ny] = false;
+			route.remove(map[nx][ny]);
 		}
-
-	}
-
-	static boolean isOut(int x, int y) {
-		return x < 0 || x >= N || y < 0 || y >= N;
 	}
 }
