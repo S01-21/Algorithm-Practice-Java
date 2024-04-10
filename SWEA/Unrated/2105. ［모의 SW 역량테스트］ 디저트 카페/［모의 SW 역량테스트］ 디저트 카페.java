@@ -10,14 +10,6 @@ public class Solution {
 	static int[] dx = {1, 1, -1, -1};
 	static int[] dy = {1, -1, -1, 1};
 	static Set<Integer> route;
-	static class Pair{
-		int x, y;
-		public Pair(int x, int y) {
-			super();
-			this.x = x;
-			this.y = y;
-		}
-	}
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
@@ -71,8 +63,6 @@ public class Solution {
 			if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
 			if (vis[nx][ny])	continue;
 			if (route.contains(map[nx][ny])) continue;
-			if (dir == 1 && ny == 0) continue;		// 대각선 왼쪽 이동 시 왼쪽 여유 한칸 필요 
-			if (dir == 0 && nx == N-1)	continue;
 			vis[nx][ny] = true;
 			route.add(map[nx][ny]);
 			func(startX, startY, nx, ny, dir, cnt + 1);
