@@ -1,127 +1,107 @@
-
 import java.util.*;
 import java.io.*;
 
-// 프로세서 연결하기 
 public class Solution {
 	static StringBuilder sb = new StringBuilder();
 	static int N;
+	static int res;
+	static int max;
+	static int coreConn, coreTotal;
 	static int[][] map;
-	static ArrayList<Core> list;
-	static int[] dx = { -1, 1, 0, 0 };
-	static int[] dy = { 0, 0, -1, 1 };
-	static int coreCnt; // Core 총 개수
-	static int res; // 전선 길이 합 최소 (결과)
-	static int maxCnt; // 연결된 Core 개수 최대
-
-	static class Core {
+	static boolean[][] vis;
+	static int[] dx = {-1,1,0,0};
+	static int[] dy = {0,0,-1,1};
+	static class Core{
 		int x, y;
-
 		public Core(int x, int y) {
 			super();
 			this.x = x;
 			this.y = y;
 		}
 	}
-
+	static ArrayList<Core> cores;
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int T = Integer.parseInt(br.readLine());
-
 		for (int tc = 1; tc <= T; tc++) {
-			sb.append("#").append(tc).append(" ");
 			N = Integer.parseInt(br.readLine());
 			map = new int[N][N];
-			list = new ArrayList<>();
-
-			coreCnt = 0;
+			coreConn = 0;
+			coreTotal = 0;
+			cores = new ArrayList<>();
 			StringTokenizer st = null;
-			for (int i = 0; i < N; i++) {
+			for (int i=0; i<N; i++) {
 				st = new StringTokenizer(br.readLine());
-				for (int j = 0; j < N; j++) {
+				for (int j=0; j<N; j++) {
 					map[i][j] = Integer.parseInt(st.nextToken());
-					if (map[i][j] == 1) { // Core 위치
-						coreCnt++;
-						if (i == N - 1 || j == N - 1 || i == 0 || j == 0) {
+					if (map[i][j] == 1) {	// core
+						if (i==0 || i == N-1 || j == 0 || j == N-1) {
+							coreConn++;	// 가장자리는 core 카운트만 증가시키고 저장안하고 패스
+							coreTotal++;
 							continue;
-						} else {
-							list.add(new Core(i, j));
 						}
+						coreTotal++;
+						cores.add(new Core(i, j));
 					}
 				}
 			}
+			
+			res = Integer.MAX_VALUE;	// 전선길이의 합 (최소)
+			max = -1;		// 전원 연결된 Core 개수
+			vis = new boolean[N][N];
+			func(0, coreConn, 0);
 
-			maxCnt = Integer.MIN_VALUE;
-			res = Integer.MAX_VALUE;
-			func(0, 0, 0);
-
-			sb.append(res).append("\n");
+			
+			sb.append("#").append(tc).append(" ").append(res).append("\n");
 		}
+		
 
 		System.out.println(sb);
 	}
-
-	// num: 코어 인덱스, core: 연결된 코어 개수, wireSum: 사용된 전선 길이 합 
-	private static void func(int num, int core, int wireSum) {
-
-		if (num == list.size()) {
-			if (maxCnt < core) {	// Core 최대 개수로 
-				maxCnt = core;
-				res = wireSum;
-			} else if (maxCnt == core) {	// 전선 최소 길이로 
-				res = Math.min(res, wireSum);
+	private static void func(int idx, int connectCount, int length) {
+		if (idx == (coreTotal - coreConn)) {	
+			if (connectCount > max) {
+				max = connectCount;
+				res = length;
+			} else if (connectCount == max) {
+				res = Math.min(length, res);
 			}
 			return;
 		}
 		
-		Core cur = list.get(num);
+		Core cur = cores.get(idx);
+		int x = cur.x;
+		int y = cur.y;
+		
 		for (int dir = 0; dir < 4; dir++) {
-			int cnt = 0; // 전선길이 카운트
-			int nx = cur.x;
-			int ny = cur.y;
-			while (true) {
+			int nx = x;
+			int ny = y;
+			
+			int len = 0;
+			while(true) {
 				nx += dx[dir];
 				ny += dy[dir];
-
-				if (isOut(nx, ny))	break; // 전선연결 성공
-
-				if (map[nx][ny] == 1) {
-					// 다른 코어or전선 만나서 전선 못만들면 패스 (전선길이 리셋)
-					cnt = 0;
+				if (nx < 0 || nx >= N || ny < 0 || ny >= N) {	// 가장자리 도착 (연결 완료)
+					func(idx + 1, connectCount + 1, length + len);
 					break;
 				}
-
-				cnt++; // 지나갈 수 있으면 전선길이 증가시키면서 계속 확인
+				if (vis[nx][ny])	break;	// 다른 전선과 교차될 경우
+				if (map[nx][ny] == 1)	break;	// 다른 core 있을 경우
+				
+				len++;
+				vis[nx][ny] = true;
 			}
-
-			// cnt(전선길이) 만큼 map에 반영
-			int tx = cur.x;
-			int ty = cur.y;
-			for (int i = 0; i < cnt; i++) {
-				tx += dx[dir];
-				ty += dy[dir];
-				map[tx][ty] = 1;
+			
+			// vis배열 원상복구
+			nx = x;
+			ny = y;
+			for (int k = 0; k < len; k++) {
+				nx += dx[dir];
+				ny += dy[dir];
+				vis[nx][ny] = false;
 			}
-
-			if (cnt == 0) { // 전선 연결 못했을 경우
-				func(num + 1, core, wireSum);
-			} else { // 전선 연결 성공했을 경우
-				func(num + 1, core + 1, wireSum + cnt);
-			}
-
-			// cnt(전선길이) 만큼 map 원상복귀 
-			tx = cur.x;
-			ty = cur.y;
-			for (int i = 0; i < cnt; i++) {
-				tx += dx[dir];
-				ty += dy[dir];
-				map[tx][ty] = 0;
-			}
-
 		}
-	}
-
-	static boolean isOut(int x, int y) {
-		return x < 0 || x >= N || y < 0 || y >= N;
+		
+		func(idx + 1, connectCount, length);	// 연결안할 경우 
 	}
 }
