@@ -5,19 +5,20 @@ import java.io.*;
 public class Main {
 	static StringBuilder sb = new StringBuilder();
 	static int N, M, K, X;
-	static class Pair{
-		int num, dist;
-
-		public Pair(int num, int dist) {
+	static Node[] adjList;
+	static class Node{
+		int num;
+		Node next;
+		public Node(int num, Node next) {
 			super();
 			this.num = num;
-			this.dist = dist;
+			this.next = next;
 		}
 		
 	}
 	static boolean[] vis;
-	static ArrayList<Integer>[] adjList;
-	static ArrayList<Integer> res;
+	static int[] minDist;
+	static int res;
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
@@ -25,52 +26,54 @@ public class Main {
 		M = Integer.parseInt(st.nextToken()); // 도로의 개수
 		K = Integer.parseInt(st.nextToken()); // 거리 정보
 		X = Integer.parseInt(st.nextToken()); // 출발 도시 번호
-		adjList = new ArrayList[N+1];
-		for (int i=0; i<=N; i++) {
-			adjList[i] = new ArrayList<>();
-			
-		}
+		adjList = new Node[N+1];
 		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine());
 			int from = Integer.parseInt(st.nextToken());
 			int to = Integer.parseInt(st.nextToken());
-			adjList[from].add(to);
+			adjList[from] = new Node(to, adjList[from]);
 		}
 
-		res = new ArrayList<>();
 		vis = new boolean[N+1];
-		bfs(X);
+		minDist = new int[N+1];
+		Arrays.fill(minDist, Integer.MAX_VALUE);
+		dijkstra();
 		
-		Collections.sort(res);
-		
-		if (res.size() == 0) {
+		for (int i=1; i<=N; i++) {
+			if (minDist[i] == K) {
+				res++;
+				sb.append(i).append("\n");
+			}
+		}
+		if (res == 0) {
 			System.out.println(-1);
 		} else {
-			for (int n : res) {
-				sb.append(n).append("\n");
-			}
 			System.out.println(sb);
 		}
+		
 		br.close();
 	}
-
-	private static void bfs(int start) {
-		Queue<Pair> queue = new ArrayDeque<>();
-		vis[start] = true;
-		queue.offer(new Pair(start, 0));
+	private static void dijkstra() {
+		Queue<Node> queue = new ArrayDeque<>();
+		queue.offer(new Node(X, null));
+		minDist[X] = 0;
 		
-		while (!queue.isEmpty()) {
-			Pair cur = queue.poll();
+		while(!queue.isEmpty()) {
+			Node cur = queue.poll();
 			
-			if (cur.dist == K) {
-				res.add(cur.num);
-			}
+			if (vis[cur.num])	continue;
 			
-			for (int nxt : adjList[cur.num]) {
-				if (vis[nxt]) continue;
-				vis[nxt] = true;
-				queue.offer(new Pair(nxt, cur.dist + 1));
+			vis[cur.num] = true;
+			
+			for (Node tmp = adjList[cur.num]; tmp != null; tmp = tmp.next) {
+				if (vis[tmp.num])	continue;
+				if (minDist[tmp.num] > minDist[cur.num] + 1) {
+					minDist[tmp.num] = minDist[cur.num] + 1;
+					queue.offer(new Node(tmp.num, null));
+				}
 			}
 		}
 	}
+	
+	
 }
