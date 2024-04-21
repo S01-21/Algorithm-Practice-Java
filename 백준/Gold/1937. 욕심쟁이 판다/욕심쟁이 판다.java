@@ -25,11 +25,8 @@ public class Main {
 		res = -1;
 		dp = new int[N][N];
 		for (int i=0; i<N; i++) {
-			Arrays.fill(dp[i], -1);
-		}
-		for (int i=0; i<N; i++) {
 			for (int j=0; j<N; j++) {
-				if (dp[i][j] == -1) {
+				if (dp[i][j] == 0) {
 					dp[i][j] = dfs(i, j);
 					res = Math.max(res, dp[i][j]);
 				}
@@ -40,7 +37,7 @@ public class Main {
 		br.close();
 	}
 	private static int dfs(int x, int y) {
-		if (dp[x][y] != -1) {
+		if (dp[x][y] != 0) {
 			return dp[x][y];
 		}
 		
