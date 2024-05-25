@@ -20,10 +20,6 @@ public class Main {
 		public int compareTo(Node o) {
 			return this.time - o.time;
 		}
-		@Override
-		public String toString() {
-			return "Node [num=" + num + ", time=" + time + ", next=" + next + "]";
-		}
 		
 	}
 	static int[] inDegree, times;
@@ -42,13 +38,13 @@ public class Main {
 				int num = Integer.parseInt(st.nextToken());
 				if (num == -1)	break;
 				adjList[num] = new Node(i, time, adjList[num]);
-				inDegree[i]++;
+				inDegree[i]++;	// 진입차수 계산 
 			}
 			
 		}
 		pq = new PriorityQueue<>();
 		for (int j=1; j<=N; j++) {
-			if (inDegree[j] == 0) {
+			if (inDegree[j] == 0) {	// 진입차수 0인 노드 pq에 추가 (시작점)
 				pq.offer(new Node(j, times[j], null));
 			}
 		}
@@ -58,7 +54,7 @@ public class Main {
 			for (Node tmp = adjList[cur.num]; tmp != null; tmp = tmp.next) {
 				inDegree[tmp.num]--;
 				if (inDegree[tmp.num] == 0) {
-					times[tmp.num] += times[cur.num];
+					times[tmp.num] += times[cur.num];	// 해당 건물의 짓는 시간 + 거쳐온 건물들의 짓는 시간
 					pq.offer(new Node(tmp.num, times[tmp.num], null));
 				}
 			}
