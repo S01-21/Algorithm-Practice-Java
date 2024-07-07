@@ -8,7 +8,7 @@ public class Main {
 	static int[] pos, minDist;
 	static boolean[] vis;
 	static Node[] adjList;
-	static class Node implements Comparable<Node>{
+	static class Node{
 		int num, weight;
 		Node next;
 		public Node(int num, int weight, Node next) {
@@ -16,10 +16,6 @@ public class Main {
 			this.num = num;
 			this.weight = weight;
 			this.next = next;
-		}
-		@Override
-		public int compareTo(Node o) {
-			return this.weight - o.weight;
 		}
 	}
 	public static void main(String[] args) throws Exception {
@@ -65,7 +61,6 @@ public class Main {
 		br.close();
 	}
 	private static int dijkstra(int start, int end) {
-//		PriorityQueue<Node> pq = new PriorityQueue<>();
 		Arrays.fill(minDist, Integer.MAX_VALUE);
 		vis = new boolean[N+1];
 		minDist[start] = 0;
@@ -91,22 +86,7 @@ public class Main {
 				}
 			}
 		}
-//		pq.offer(new Node(start, minDist[start], null));
-		
-//		while (!pq.isEmpty()) {
-//			Node cur = pq.poll();
-//			if (vis[cur.num])	continue;
-//			vis[cur.num] = true;
-//			if (cur.num == end)	break;
-//			
-//			for (Node tmp = adjList[cur.num]; tmp != null; tmp = tmp.next) {
-//				if (vis[tmp.num])	continue;
-//				if (minDist[tmp.num] > minDist[cur.num] + tmp.weight) {
-//					minDist[tmp.num] = minDist[cur.num] + tmp.weight;
-//					pq.offer(new Node(tmp.num, minDist[tmp.num], null));
-//				}
-//			}
-//		}
+
 		return minDist[end];
 	}
 }
