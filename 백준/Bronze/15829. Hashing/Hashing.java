@@ -10,12 +10,14 @@ public class Main {
 		N = Integer.parseInt(br.readLine());
 		String str = br.readLine();
 		
-		int sum = 0;
+		long sum = 0;
 		int r = 31;
 		int M = 1234567891;
+		long power = 1;
 		for (int i = 0; i < N; i++) {
 			int a = str.charAt(i) - 'a' + 1;
-			sum += a*Math.pow(r, i) % M;
+			sum = (sum + (a*power) % M) % M;
+			power = (power*r) % M;
 		}
 		System.out.println(sum);
 		br.close();
